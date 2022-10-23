@@ -5,6 +5,10 @@ import { useGLTF, OrbitControls, shaderMaterial } from "@react-three/drei";
 
 import "./App.css";
 
+// vec3 noisePosX = vec3(pos.x * noiseFreq + uTime, pos.y, pos.z);
+
+// pos.z -= snoise3(noisePosX) * noiseAmp;
+
 const TreeShaderMaterial = shaderMaterial(
   // Uniform
   {
@@ -20,12 +24,15 @@ const TreeShaderMaterial = shaderMaterial(
 
   void main() {  
     vec3 pos = position;
+
     float noiseFreq = 2.0;
     float noiseAmp = 0.4;
-    vec3 noisePos = vec3(pos.x * noiseFreq + uTime, pos.y, pos.z);
-    pos.y += snoise3(noisePos) * noiseAmp;
 
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);  
+    float new_x = pos.x * cos(uTime) - pos.y * sin(uTime);
+    float new_y = pos.y * cos(uTime) + pos.x * sin(uTime);
+
+
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(new_x, new_y, pos.z, 1.0);  
   }`,
   // Fragment Shader
   glsl` 
